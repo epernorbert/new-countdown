@@ -20,8 +20,12 @@ io.on('connection',(socket)=>{
   })
 })
 
+const getTime = (date) => (
+  date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds()
+)
+
 setInterval(()=>{
-  io.to('clock-room').emit('time', new Date())
+  io.to('clock-room').emit('time', getTime(new Date()))
 }, 1000)
 
 server.listen(PORT, err => {
