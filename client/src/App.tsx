@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {io} from 'socket.io-client'
 import './App.css';
+import Time from './Components/Time/Time';
 
 const App = () => {
 
@@ -19,8 +20,8 @@ const App = () => {
   },[])
 
   return (
-    <div className="App">
-      {time}
+    <div className="App">      
+      <Time time={time}/>
     </div>
   )
 }
