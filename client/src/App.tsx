@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {io} from 'socket.io-client'
-import Clock from './Components/Clock/Clock';
+import './App.css';
 
 const App = () => {
 
@@ -20,7 +20,7 @@ const App = () => {
 
   return (
     <div className="App">
-      <Clock clock={time}/>
+      {time}
     </div>
   )
 }
