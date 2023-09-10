@@ -1,6 +1,4 @@
-import { log } from 'console';
 import React, { useEffect, useState } from 'react'; // we need this to make JSX compile
-import { io } from 'socket.io-client';
 import Time from '../../Components/Time/Time';
 import Timer from '../../Components/Timer/Timer';
 import styles from './Home.module.scss';

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { io } from 'socket.io-client';
 import styles from './Admin.module.scss';
 
@@ -6,7 +6,8 @@ type Props = {socket: any}
 
 const Admin = ({ socket }: Props) => {
 
-  const [timer, setTimer] = useState(60);  
+  const [timer, setTimer] = useState(60);
+  const timerRef = useRef<any>(null);
   
   const submitHandler = (e: React.FormEvent) => {
     e.preventDefault();
@@ -15,14 +16,14 @@ const Admin = ({ socket }: Props) => {
   }
 
   const timerChangeHander: React.ChangeEventHandler<HTMLInputElement> = (e) => {
-    setTimer(parseInt(e.target.value));
+    setTimer(timerRef.current?.value)
   }
 
   return (
     <div className={styles.admin}>
       <h1>This is admin page</h1>
       <form onSubmit={submitHandler} >
-        <input placeholder='Minutes' onChange={timerChangeHander} value={timer} />
+        <input placeholder='Minutes' onChange={timerChangeHander} ref={timerRef} />
         <button type='submit' value='Send'>Send</button>
       </form>
     </div>   
