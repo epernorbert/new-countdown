@@ -11,12 +11,13 @@ const io = socketIo(server,{
 }) //in case server and client run on different urls
 
 io.on('connection',(socket)=>{
-  console.log('client connected: ',socket.id)
+  console.log('client connected: ',socket.id) // terminal
   
   socket.join('clock-room')
   
   socket.on('send-timer', timer => {
-    console.log(timer);
+    console.log(timer); // terminal
+    socket.broadcast.emit('timer', timer); // because the broadcast send every client but who send
   })
 
   socket.on('disconnect',(reason)=>{
@@ -29,7 +30,7 @@ const getTime = (date) => (
 )
 
 setInterval(()=>{
-  io.to('clock-room').emit('time', getTime(new Date()))
+  io.to('clock-room').emit('currentTime', getTime(new Date()))
 }, 1000)
 
 server.listen(PORT, err => {

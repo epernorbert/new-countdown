@@ -6,23 +6,23 @@ type Props = {socket: any}
 
 const Admin = ({ socket }: Props) => {
 
-  const [timer, setTimer] = useState("");  
+  const [timer, setTimer] = useState(60);  
   
   const submitHandler = (e: React.FormEvent) => {
     e.preventDefault();
-    socket.emit('send-timer', timer)
-    setTimer("")
+    socket.emit('send-timer', timer * 60)
+    // console.log(timer); // console log in any tab
   }
 
   const timerChangeHander: React.ChangeEventHandler<HTMLInputElement> = (e) => {
-    setTimer(e.target.value);    
+    setTimer(parseInt(e.target.value));
   }
 
   return (
     <div className={styles.admin}>
       <h1>This is admin page</h1>
       <form onSubmit={submitHandler} >
-        <input placeholder='Timer' onChange={timerChangeHander} value={timer} />
+        <input placeholder='Minutes' onChange={timerChangeHander} value={timer} />
         <button type='submit' value='Send'>Send</button>
       </form>
     </div>   
