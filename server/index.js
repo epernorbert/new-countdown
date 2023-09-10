@@ -15,9 +15,13 @@ io.on('connection',(socket)=>{
   
   socket.join('clock-room')
   
+  socket.on('send-timer', timer => {
+    console.log(timer);
+  })
+
   socket.on('disconnect',(reason)=>{
     console.log(reason)
-  })
+  })  
 })
 
 const getTime = (date) => (
