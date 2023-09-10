@@ -2,7 +2,9 @@ import { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 import styles from './Admin.module.scss';
 
-const Admin = () => { 
+type Props = {}
+
+const Admin = ({ }: Props) => {
 
   const socket = io('http://localhost:5000'); // server port
   const [timer, setTimer] = useState("");  

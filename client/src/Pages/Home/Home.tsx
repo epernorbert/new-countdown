@@ -3,7 +3,9 @@ import { io } from 'socket.io-client';
 import Time from '../../Components/Time/Time';
 import styles from './Home.module.scss';
 
-const Home = () => {
+type Props = {}
+
+const Home = ({ }: Props) => {
 
   const [time, setTime] = useState('fetching')  
 
