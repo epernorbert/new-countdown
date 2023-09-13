@@ -20,6 +20,21 @@ io.on('connection',(socket)=>{
     socket.broadcast.emit('timer', timer); // because the broadcast send every client but who send
   })
 
+  socket.on('start-timer', status => {
+    console.log(status); // terminal
+    socket.broadcast.emit('start', status); // because the broadcast send every client but who send
+  })
+
+  socket.on('pause-timer', status => {
+    console.log(status); // terminal
+    socket.broadcast.emit('pause', status); // because the broadcast send every client but who send
+  })
+
+  socket.on('stop-timer', status => {
+    console.log(status); // terminal
+    socket.broadcast.emit('stop', status); // because the broadcast send every client but who send
+  })
+
   socket.on('disconnect',(reason)=>{
     console.log(reason)
   })  
