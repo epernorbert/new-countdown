@@ -33,22 +33,6 @@ const Admin = ({ socket }: Props) => {
     setTimer(timerRef.current?.value);
   };
 
-  //Room State
-  const [room, setRoom] = useState("");
-
-  // Messages States
-  const [message, setMessage] = useState("");
-
-  const joinRoom = () => {
-    if (room !== "") {
-      socket.emit("join_room", room);
-    }
-  };
-
-  const sendMessage = () => {
-    socket.emit("send_message", { message, room });
-  };
-
   return (
     <div className={styles.admin}>
       <h1>This is admin page</h1>
@@ -63,22 +47,6 @@ const Admin = ({ socket }: Props) => {
         <button type="submit">Pause</button>
         <button type="submit">Stop</button>
       </form>
-
-      <input
-        placeholder="Room Number..."
-        onChange={(event) => {
-          setRoom(event.target.value);
-        }}
-      />
-      <button onClick={joinRoom}> Join Room</button>
-      <input
-        placeholder="Message..."
-        onChange={(event) => {
-          setMessage(event.target.value);
-        }}
-      />
-      <button onClick={sendMessage}> Send Message</button>
-      <a href={`/${room}`}>Room id: {room}</a>
     </div>
   );
 };
