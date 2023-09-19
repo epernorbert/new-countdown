@@ -8,39 +8,34 @@ const io = socketIo(server, {
   cors: {
     origin: "http://localhost:3000",
   },
-}); //in case server and client run on different urls
+});
 
 io.on("connection", (socket) => {
-  console.log("client connected: ", socket.id);
-
+  socket.on("join-room", (data) => {
+    socket.join(data);
+  });
   socket.join("clock-room");
 
-  socket.on("send-timer", (timer) => {
-    console.log(timer);
-    socket.broadcast.emit("timer", timer);
+  console.log("client connected: ", socket.id);
+
+  socket.on("send-timer", (data) => {
+    socket.to(data.id).emit("timer", data.timer);
   });
 
-  socket.on("start-timer", (status) => {
-    console.log(status);
-    socket.broadcast.emit("start", status);
+  socket.on("start-timer", (data) => {
+    socket.to(data.id).emit("start", data.statusRef.current);
   });
 
-  socket.on("pause-timer", (status) => {
-    console.log(status);
-    socket.broadcast.emit("pause", status);
+  socket.on("pause-timer", (data) => {
+    socket.to(data.id).emit("pause", data.statusRef.current);
   });
 
-  socket.on("stop-timer", (status) => {
-    console.log(status);
-    socket.broadcast.emit("stop", status);
+  socket.on("stop-timer", (data) => {
+    socket.to(data.id).emit("stop", data.statusRef.current);
   });
 
   socket.on("disconnect", (reason) => {
     console.log(reason);
-  });
-
-  socket.on("join-room", (data) => {
-    socket.join(data);
   });
 
   socket.on("send-message", (data) => {
