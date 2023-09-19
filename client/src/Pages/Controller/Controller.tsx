@@ -7,11 +7,11 @@ type Props = { socket: any };
 type status = "start" | "stop" | "pause";
 
 const Controller = ({ socket }: Props) => {
-  const [timer, setTimer] = useState(60);
-  const timerRef = useRef<any>(null);
+  const [timer, setTimer] = useState(1);
   const [message, setMessage] = useState("");
-  const statusRef = useRef<status>("stop");
   const [currentTime, setCurrentTime] = useState("fetching");
+  const timerRef = useRef<any>(null);
+  const statusRef = useRef<status>("stop");
 
   const { id } = useParams();
 
@@ -19,6 +19,7 @@ const Controller = ({ socket }: Props) => {
 
   const sendMessage = () => {
     socket.emit("send-message", { message, id });
+    setMessage("");
   };
 
   const submitHandler = (e: SyntheticEvent<HTMLFormElement, SubmitEvent>) => {
@@ -27,6 +28,7 @@ const Controller = ({ socket }: Props) => {
 
     if (submitValue === "Send") {
       socket.emit("send-timer", { timer: timer * 60, id });
+      setTimer(timer);
     }
 
     if (submitValue === "Start") {
@@ -66,6 +68,7 @@ const Controller = ({ socket }: Props) => {
           placeholder="Minutes"
           onChange={timerChangeHander}
           ref={timerRef}
+          value={timer}
         />
         <button type="submit">Send</button>
         <button type="submit">Start</button>
@@ -77,6 +80,7 @@ const Controller = ({ socket }: Props) => {
         onChange={(event) => {
           setMessage(event.target.value);
         }}
+        value={message}
       />
       <button onClick={sendMessage}>Send Message</button>
       <Time time={currentTime} />

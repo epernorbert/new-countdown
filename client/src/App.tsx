@@ -11,7 +11,7 @@ const App = () => {
   return (
     <div className="App">
       <Routes>
-        <Route path="/" element={<Home socket={socket} />} />
+        <Route path="/" element={<Home />} />
         <Route path="/:id" element={<Client socket={socket} />} />
         <Route
           path="/:id/controller"

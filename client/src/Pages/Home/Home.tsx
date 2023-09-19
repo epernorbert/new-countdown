@@ -1,11 +1,26 @@
-import { useEffect, useState } from "react";
-import Time from "../../Components/Time/Time";
+import { useState } from "react";
 import styles from "./Home.module.scss";
 
-type Props = { socket: any };
+type Props = {};
 
-const Home = ({ socket }: Props) => {
-  return <div className={styles.home}>Home page</div>;
+const Home = ({}: Props) => {
+  const [room, setRoom] = useState("");
+
+  return (
+    <div className={styles.home}>
+      <div>Home page</div>
+      <input
+        placeholder="Room name"
+        onChange={(e) => {
+          setRoom(e.target.value);
+        }}
+      ></input>
+      <div>
+        <span>Create room:</span>
+        <a href={`${room}/controller`}>Create room</a>
+      </div>
+    </div>
+  );
 };
 
 export default Home;

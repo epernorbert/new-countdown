@@ -6,13 +6,14 @@ import Timer from "../../Components/Timer/Timer";
 type Props = { socket: any };
 
 const Client = ({ socket }: Props) => {
+  const [message, setMessage] = useState();
   const { id } = useParams();
 
   socket.emit("join-room", id);
 
   useEffect(() => {
     socket.on("message", (data: any) => {
-      console.log(data.message);
+      setMessage(data.message);
     });
   }, [socket]);
 
@@ -23,7 +24,6 @@ const Client = ({ socket }: Props) => {
     });
 
     socket.on("timer", (timer: number) => {
-      console.log(timer); // console log where emited the timer
       setTimer(timer);
       setMax(timer);
     });
@@ -78,6 +78,7 @@ const Client = ({ socket }: Props) => {
       <div>Client page</div>
       <Timer timeLeft={timer} />
       <ProgressBar max={max} value={timer} />
+      {message && <div>{message}</div>}
     </div>
   );
 };
