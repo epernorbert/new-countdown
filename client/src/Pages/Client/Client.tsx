@@ -6,10 +6,10 @@ type Props = { socket: any };
 const Client = ({ socket }: Props) => {
   const { id } = useParams();
 
-  socket.emit("join_room", id);
+  socket.emit("join-room", id);
 
   useEffect(() => {
-    socket.on("receive_message", (data: any) => {
+    socket.on("message", (data: any) => {
       console.log(data.message);
     });
   }, [socket]);

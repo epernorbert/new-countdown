@@ -11,40 +11,40 @@ const io = socketIo(server, {
 }); //in case server and client run on different urls
 
 io.on("connection", (socket) => {
-  console.log("client connected: ", socket.id); // terminal
+  console.log("client connected: ", socket.id);
 
   socket.join("clock-room");
 
   socket.on("send-timer", (timer) => {
-    console.log(timer); // terminal
-    socket.broadcast.emit("timer", timer); // because the broadcast send every client but who send
+    console.log(timer);
+    socket.broadcast.emit("timer", timer);
   });
 
   socket.on("start-timer", (status) => {
-    console.log(status); // terminal
-    socket.broadcast.emit("start", status); // because the broadcast send every client but who send
+    console.log(status);
+    socket.broadcast.emit("start", status);
   });
 
   socket.on("pause-timer", (status) => {
-    console.log(status); // terminal
-    socket.broadcast.emit("pause", status); // because the broadcast send every client but who send
+    console.log(status);
+    socket.broadcast.emit("pause", status);
   });
 
   socket.on("stop-timer", (status) => {
-    console.log(status); // terminal
-    socket.broadcast.emit("stop", status); // because the broadcast send every client but who send
+    console.log(status);
+    socket.broadcast.emit("stop", status);
   });
 
   socket.on("disconnect", (reason) => {
     console.log(reason);
   });
 
-  socket.on("join_room", (data) => {
+  socket.on("join-room", (data) => {
     socket.join(data);
   });
 
-  socket.on("send_message", (data) => {
-    socket.to(data.id).emit("receive_message", data);
+  socket.on("send-message", (data) => {
+    socket.to(data.id).emit("message", data);
   });
 });
 

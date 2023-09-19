@@ -8,10 +8,10 @@ const Controller = ({ socket }: Props) => {
 
   const [message, setMessage] = useState("");
 
-  socket.emit("join_room", id);
+  socket.emit("join-room", id);
 
   const sendMessage = () => {
-    socket.emit("send_message", { message, id });
+    socket.emit("send-message", { message, id });
   };
 
   return (
