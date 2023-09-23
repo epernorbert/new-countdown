@@ -14,7 +14,8 @@ const Client = ({ socket }: Props) => {
   const [message, setMessage] = useState();
   const { id } = useParams();
   const [controller, setController] = useState([]);
-  const [exist, setExist] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isControllerExist, setIsControllerExist] = useState(false);
 
   socket.emit("join-room", id);
 
@@ -53,60 +54,61 @@ const Client = ({ socket }: Props) => {
   });
 
   useEffect(() => {
-    const countdown = setTimeout(decreateTimer, 1000);
+    const countdown = setTimeout(decreaseTimer, 1000);
 
     if (status === "pause") {
       clearTimeout(countdown);
       setTimer(timer);
-      return () => {};
+      return;
     }
 
     if (status === "stop") {
       clearTimeout(countdown);
       setTimer(max);
-      return () => {};
+      return;
     }
 
     if (timer === 0) {
       clearTimeout(countdown);
       setTimer(0);
       setStatus("pause");
-      return () => {};
+      return;
     }
-    //return () => {clearTimeout(countdown)}
   }, [timer, status, max]);
 
-  const decreateTimer = () => {
+  const decreaseTimer = () => {
     setTimer((timer) => timer - 1);
   };
 
   useEffect(() => {
+    setIsLoading(true);
     fetch("http://localhost:5000/controller-list")
       .then((response) => response.json())
       .then((data) => setController(data))
+      .then(() => setIsLoading(false))
       .catch((error) => console.log(error));
   }, []);
 
   useEffect(() => {
-    controller?.map((controller: Controller) => {
-      if (id === controller.controller_name) {
-        setExist(true);
-      }
-    });
+    if (controller.length > 0) {
+      controller.find((item: Controller) => {
+        return item.controller_name === id ? setIsControllerExist(true) : "";
+      });
+    }
   }, [controller]);
 
   return (
     <div>
-      {exist ? (
-        <div>
-          <div>Client page</div>
+      <div>Client page</div>
+      {isLoading && <h2>Loadin...</h2>}
+      {!isLoading && isControllerExist && (
+        <>
           <Timer timeLeft={timer} />
           <ProgressBar max={max} value={timer} />
           {message && <div>{message}</div>}
-        </div>
-      ) : (
-        <h1>404</h1>
+        </>
       )}
+      {!isLoading && !isControllerExist && <h2>404</h2>}
     </div>
   );
 };
