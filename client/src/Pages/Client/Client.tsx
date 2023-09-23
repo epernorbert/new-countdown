@@ -5,9 +5,16 @@ import Timer from "../../Components/Timer/Timer";
 
 type Props = { socket: any };
 
+type Controller = {
+  controller_id: number;
+  controller_name: string;
+};
+
 const Client = ({ socket }: Props) => {
   const [message, setMessage] = useState();
   const { id } = useParams();
+  const [controller, setController] = useState([]);
+  const [exist, setExist] = useState(false);
 
   socket.emit("join-room", id);
 
@@ -73,12 +80,33 @@ const Client = ({ socket }: Props) => {
     setTimer((timer) => timer - 1);
   };
 
+  useEffect(() => {
+    fetch("http://localhost:5000/controller-list")
+      .then((response) => response.json())
+      .then((data) => setController(data))
+      .catch((error) => console.log(error));
+  }, []);
+
+  useEffect(() => {
+    controller?.map((controller: Controller) => {
+      if (id === controller.controller_name) {
+        setExist(true);
+      }
+    });
+  }, [controller]);
+
   return (
     <div>
-      <div>Client page</div>
-      <Timer timeLeft={timer} />
-      <ProgressBar max={max} value={timer} />
-      {message && <div>{message}</div>}
+      {exist ? (
+        <div>
+          <div>Client page</div>
+          <Timer timeLeft={timer} />
+          <ProgressBar max={max} value={timer} />
+          {message && <div>{message}</div>}
+        </div>
+      ) : (
+        <h1>404</h1>
+      )}
     </div>
   );
 };

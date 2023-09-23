@@ -9,6 +9,33 @@ const io = socketIo(server, {
     origin: "http://localhost:3000",
   },
 });
+const mysql = require("mysql");
+const cors = require("cors");
+
+app.use(cors());
+
+const db = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  password: "",
+  database: "countdown",
+});
+
+app.get("/test", (request, response) => {
+  console.log("test");
+  return response.json("From backend side");
+});
+
+app.get("/controller-list", (request, response) => {
+  const SQL = "SELECT * FROM controller";
+  db.query(SQL, (error, data) => {
+    if (error) {
+      return response.json(error);
+    } else {
+      return response.json(data);
+    }
+  });
+});
 
 io.on("connection", (socket) => {
   socket.on("join-room", (data) => {
