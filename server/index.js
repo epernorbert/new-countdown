@@ -14,16 +14,17 @@ const cors = require("cors");
 
 app.use(cors());
 
+// parse application/x-www-form-urlencoded
+app.use(express.urlencoded({ extended: true }));
+
+// parse application/json
+app.use(express.json());
+
 const db = mysql.createConnection({
   host: "localhost",
   user: "root",
   password: "",
   database: "countdown",
-});
-
-app.get("/test", (request, response) => {
-  console.log("test");
-  return response.json("From backend side");
 });
 
 app.get("/controller-list", (request, response) => {
@@ -37,10 +38,26 @@ app.get("/controller-list", (request, response) => {
   });
 });
 
+app.post("/create-room/:room", (request, response) => {
+  const room = request.params.room;
+  const formInput = request.body.room;
+  if (room === formInput) {
+    const SQL = `INSERT INTO controller (controller_name) VALUES ('${room}')`;
+    db.query(SQL, (error, data) => {
+      if (error) {
+        return response.json(error);
+      } else {
+        return response.json(data);
+      }
+    });
+  }
+});
+
 io.on("connection", (socket) => {
   socket.on("join-room", (data) => {
     socket.join(data);
   });
+
   socket.join("clock-room");
 
   console.log("client connected: ", socket.id);
