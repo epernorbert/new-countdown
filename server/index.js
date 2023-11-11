@@ -40,17 +40,26 @@ app.get("/controller-list", (request, response) => {
 
 app.post("/create-room/:room", (request, response) => {
   const room = request.params.room;
-  const formInput = request.body.room;
-  if (room === formInput) {
-    const SQL = `INSERT INTO controller (controller_name) VALUES ('${room}')`;
-    db.query(SQL, (error, data) => {
-      if (error) {
-        return response.json(error);
-      } else {
-        return response.json(data);
+  const SQL = `SELECT * FROM controller WHERE controller_name = '${room}'`;
+  db.query(SQL, (error, data) => {
+    if (error) {
+      return response.json(error);
+    } else {
+      if (data.length === 0) {
+        const formInput = request.body.room;
+        if (room === formInput) {
+          const SQL = `INSERT INTO controller (controller_name) VALUES ('${room}')`;
+          db.query(SQL, (error, data) => {
+            if (error) {
+              return response.json(error);
+            } else {
+              return response.json(data);
+            }
+          });
+        }
       }
-    });
-  }
+    }
+  });
 });
 
 io.on("connection", (socket) => {
