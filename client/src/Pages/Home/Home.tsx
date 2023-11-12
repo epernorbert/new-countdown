@@ -14,13 +14,19 @@ const Home = ({}: Props) => {
   const [isControllerExist, setIsControllerExist] = useState(false);
 
   const handleCreateRoom = () => {
+    const key = Math.random().toString(36).slice(2);
+
     fetch(`http://localhost:5000/create-room/${room}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         room: room,
+        key: key,
       }),
-    }).then((response) => response.json());
+    })
+      .then((response) => response.json())
+      .then(() => localStorage.setItem("controller_key", key))
+      .then(() => (window.location.href = `${room}/controller`));
   };
 
   useEffect(() => {
@@ -52,9 +58,7 @@ const Home = ({}: Props) => {
       ></input>
       <div>
         <span>Create room:</span>
-        <a href={`${room}/controller`} onClick={handleCreateRoom}>
-          Create room
-        </a>
+        <button onClick={handleCreateRoom}>Create room</button>
       </div>
       {room.length === 0 && <p>Start typing...</p>}
       {room.length > 0 && !isControllerExist && (

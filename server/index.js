@@ -46,9 +46,11 @@ app.post("/create-room/:room", (request, response) => {
       return response.json(error);
     } else {
       if (data.length === 0) {
-        const formInput = request.body.room;
-        if (room === formInput) {
-          const SQL = `INSERT INTO controller (controller_name) VALUES ('${room}')`;
+        const formInputRoom = request.body.room;
+        const key = request.body.key;
+
+        if (room === formInputRoom) {
+          const SQL = `INSERT INTO controller (controller_name, controller_key) VALUES ('${room}', '${key}')`;
           db.query(SQL, (error, data) => {
             if (error) {
               return response.json(error);
@@ -58,6 +60,18 @@ app.post("/create-room/:room", (request, response) => {
           });
         }
       }
+    }
+  });
+});
+
+app.get("/controller-key/:room", (request, response) => {
+  const room = request.params.room;
+  const SQL = `SELECT controller_key FROM controller WHERE controller_name = '${room}'`;
+  db.query(SQL, (error, data) => {
+    if (error) {
+      return response.json(error);
+    } else {
+      return response.json(data);
     }
   });
 });

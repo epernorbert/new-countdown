@@ -32,6 +32,18 @@ const Controller = ({ socket }: Props) => {
   }, []);
 
   useEffect(() => {
+    fetch(`http://localhost:5000/controller-key/${id}`)
+      .then((response) => response.json())
+      .then((data) => {
+        if (localStorage.getItem("controller_key") !== data[0].controller_key) {
+          if (window.confirm("Acces denied")) {
+            window.location.href = "http://localhost:3000/";
+          }
+        }
+      });
+  }, []);
+
+  useEffect(() => {
     if (controller.length > 0) {
       controller.find((item: Controller) => {
         return item.controller_name === id ? setIsControllerExist(true) : "";
