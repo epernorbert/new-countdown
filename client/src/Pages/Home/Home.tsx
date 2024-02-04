@@ -12,6 +12,7 @@ const Home = ({}: Props) => {
   const [room, setRoom] = useState("");
   const [controller, setController] = useState([]);
   const [isControllerExist, setIsControllerExist] = useState(false);
+  const [activeController, setActiveController] = useState("");
 
   const handleCreateRoom = () => {
     const key = Math.random().toString(36).slice(2);
@@ -28,6 +29,15 @@ const Home = ({}: Props) => {
       .then(() => localStorage.setItem("controller_key", key))
       .then(() => (window.location.href = `${room}/controller`));
   };
+
+  useEffect(() => {
+    const controller_key = localStorage.getItem("controller_key");
+    if (controller_key !== null) {
+      fetch(`http://localhost:5000/active-controller/${controller_key}`)
+        .then((response) => response.json())
+        .then((data) => setActiveController(data[0].controller_name));
+    }
+  }, []);
 
   useEffect(() => {
     fetch("http://localhost:5000/controller-list")
@@ -65,6 +75,13 @@ const Home = ({}: Props) => {
         <p style={{ color: "green" }}>FREE</p>
       )}
       {isControllerExist && <p style={{ color: "red" }}>TAKEN</p>}
+      {activeController && (
+        <p>
+          Active controller:{" "}
+          <a href={`/${activeController}/controller`}>{activeController}</a>
+        </p>
+      )}
+      {!activeController && <p>No active controller</p>}
     </div>
   );
 };

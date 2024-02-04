@@ -27,6 +27,18 @@ const db = mysql.createConnection({
   database: "countdown",
 });
 
+app.get("/active-controller/:controller_key", (request, response) => {
+  const controller_key = request.params.controller_key;
+  const SQL = `SELECT * FROM controller WHERE controller_key = '${controller_key}'`;
+  db.query(SQL, (error, data) => {
+    if (error) {
+      return response.json(error);
+    } else {
+      return response.json(data);
+    }
+  });
+});
+
 app.get("/controller-list", (request, response) => {
   const SQL = "SELECT * FROM controller";
   db.query(SQL, (error, data) => {

@@ -36,9 +36,7 @@ const Controller = ({ socket }: Props) => {
       .then((response) => response.json())
       .then((data) => {
         if (localStorage.getItem("controller_key") !== data[0].controller_key) {
-          if (window.confirm("Acces denied")) {
-            window.location.href = "http://localhost:3000/";
-          }
+          window.location.href = "http://localhost:3000/";
         }
       });
   }, []);
