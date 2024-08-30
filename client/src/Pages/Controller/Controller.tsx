@@ -1,10 +1,11 @@
 import React, { SyntheticEvent, useEffect, useRef, useState } from "react"; // we need this to make JSX compile
 import { useParams } from "react-router-dom";
 import Time from "../../Components/Time/Time";
+import styles from "./Controller.module.scss";
 
 type Props = { socket: any };
 
-type status = "start" | "stop" | "pause";
+type status = "start" | "stop" | "pause" | "continue";
 
 type Controller = {
   controller_id: number;
@@ -17,6 +18,7 @@ const Controller = ({ socket }: Props) => {
   const [currentTime, setCurrentTime] = useState("fetching");
   const timerRef = useRef<any>(null);
   const statusRef = useRef<status>("stop");
+  const [buttonText, setButtonText] = useState<status>("start");
   const { id } = useParams();
   const [isLoading, setIsLoading] = useState(false);
   const [controller, setController] = useState([]);
@@ -69,24 +71,30 @@ const Controller = ({ socket }: Props) => {
     e.preventDefault();
     const submitValue = e.nativeEvent.submitter?.innerHTML;
 
-    if (submitValue === "Send") {
-      socket.emit("send-timer", { timer: timer * 60, id });
-      setTimer(timer);
-    }
-
-    if (submitValue === "Start") {
-      statusRef.current = "start";
-      socket.emit("start-timer", { statusRef, id });
-    }
-
-    if (submitValue === "Pause") {
-      statusRef.current = "pause";
-      socket.emit("pause-timer", { statusRef, id });
-    }
-
-    if (submitValue === "Stop") {
+    if (submitValue === "send") {
       statusRef.current = "stop";
       socket.emit("stop-timer", { statusRef, id });
+      socket.emit("send-timer", { timer: timer * 60, id });
+      setTimer(timer);
+      setButtonText("start");
+    }
+
+    if (submitValue === "start" || submitValue === "continue") {
+      statusRef.current = "start";
+      socket.emit("start-timer", { statusRef, id });
+      setButtonText("pause");
+    }
+
+    if (submitValue === "pause") {
+      statusRef.current = "pause";
+      socket.emit("pause-timer", { statusRef, id });
+      setButtonText("continue");
+    }
+
+    if (submitValue === "stop") {
+      statusRef.current = "stop";
+      socket.emit("stop-timer", { statusRef, id });
+      setButtonText("start");
     }
   };
 
@@ -101,17 +109,18 @@ const Controller = ({ socket }: Props) => {
       {!isLoading && isControllerExist && (
         <>
           <h1>Controller page</h1>
-          <form onSubmit={submitHandler}>
+          <form className={styles.form} onSubmit={submitHandler}>
             <input
               placeholder="Minutes"
               onChange={timerChangeHander}
               ref={timerRef}
               value={timer}
             />
-            <button type="submit">Send</button>
-            <button type="submit">Start</button>
-            <button type="submit">Pause</button>
-            <button type="submit">Stop</button>
+            <button type="submit" /* disabled={buttonText === "pause"} */>
+              send
+            </button>
+            <button type="submit">{buttonText}</button>
+            <button type="submit">stop</button>
           </form>
           <input
             placeholder="Message..."
