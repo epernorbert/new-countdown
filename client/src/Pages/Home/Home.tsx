@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import styles from "./Home.module.scss";
+import { v4 as uuidv4 } from "uuid";
 
 type Props = {};
 
@@ -15,7 +16,8 @@ const Home = ({}: Props) => {
   const [activeController, setActiveController] = useState("");
 
   const handleCreateRoom = () => {
-    const key = Math.random().toString(36).slice(2);
+    const key = uuidv4();
+    console.log(key);
 
     fetch(`http://localhost:5000/create-room/${room}`, {
       method: "POST",
