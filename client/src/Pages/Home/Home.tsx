@@ -70,7 +70,9 @@ const Home = ({}: Props) => {
       ></input>
       <div>
         <span>Create room:</span>
-        <button onClick={handleCreateRoom}>Create room</button>
+        <button onClick={handleCreateRoom} disabled={isControllerExist}>
+          Create room
+        </button>
       </div>
       {room.length === 0 && <p>Start typing...</p>}
       {room.length > 0 && !isControllerExist && (
