@@ -23,6 +23,7 @@ const Controller = ({ socket }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [controller, setController] = useState([]);
   const [isControllerExist, setIsControllerExist] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     setIsLoading(true);
@@ -72,11 +73,13 @@ const Controller = ({ socket }: Props) => {
     const submitValue = e.nativeEvent.submitter?.innerHTML;
 
     if (submitValue === "send") {
-      statusRef.current = "stop";
-      socket.emit("stop-timer", { statusRef, id });
-      socket.emit("send-timer", { timer: timer * 60, id });
-      setTimer(timer);
-      setButtonText("start");
+      if (!error) {
+        statusRef.current = "stop";
+        socket.emit("stop-timer", { statusRef, id });
+        socket.emit("send-timer", { timer: timer * 60, id });
+        setTimer(timer);
+        setButtonText("start");
+      }
     }
 
     if (submitValue === "start" || submitValue === "continue") {
@@ -100,6 +103,11 @@ const Controller = ({ socket }: Props) => {
 
   const timerChangeHander: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     setTimer(timerRef.current?.value);
+    if (timerRef.current?.value > 1440) {
+      setError("Can not be over 24h");
+    } else {
+      setError("");
+    }
   };
 
   return (
@@ -115,10 +123,9 @@ const Controller = ({ socket }: Props) => {
               onChange={timerChangeHander}
               ref={timerRef}
               value={timer}
+              type="number"
             />
-            <button type="submit" /* disabled={buttonText === "pause"} */>
-              send
-            </button>
+            <button type="submit">send</button>
             <button type="submit">{buttonText}</button>
             <button type="submit">stop</button>
           </form>
@@ -131,6 +138,7 @@ const Controller = ({ socket }: Props) => {
           />
           <button onClick={sendMessage}>Send Message</button>
           <Time time={currentTime} />
+          {error && error}
         </>
       )}
       {!isLoading && !isControllerExist && <h2>404</h2>}
