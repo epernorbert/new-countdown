@@ -37,7 +37,9 @@ const Home = ({}: Props) => {
     if (controller_key !== null) {
       fetch(`http://localhost:5000/active-controller/${controller_key}`)
         .then((response) => response.json())
-        .then((data) => setActiveController(data[0].controller_name));
+        .then((data) =>
+          setActiveController(data.length > 0 ? data[0].controller_name : "")
+        );
     }
   }, []);
 
