@@ -105,7 +105,9 @@ const Controller = ({ socket }: Props) => {
     }
   };
 
-  const timerChangeHander: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+  const timerChangeHandler: React.ChangeEventHandler<HTMLInputElement> = (
+    e
+  ) => {
     setTimer(timerRef.current?.value);
     if (timerRef.current?.value > 1440) {
       setError("Can not be over 24h");
@@ -114,7 +116,7 @@ const Controller = ({ socket }: Props) => {
     }
   };
 
-  const messageChangeHander: React.ChangeEventHandler<HTMLInputElement> = (
+  const messageChangeHandler: React.ChangeEventHandler<HTMLInputElement> = (
     e
   ) => {
     setMessage(e.target.value);
@@ -136,7 +138,7 @@ const Controller = ({ socket }: Props) => {
           <form className={styles.form} onSubmit={submitHandler}>
             <input
               placeholder="Minutes"
-              onChange={timerChangeHander}
+              onChange={timerChangeHandler}
               ref={timerRef}
               value={timer}
               type="number"
@@ -147,7 +149,7 @@ const Controller = ({ socket }: Props) => {
           </form>
           <input
             placeholder="Message..."
-            onChange={messageChangeHander}
+            onChange={messageChangeHandler}
             value={message}
             ref={messageRef}
           />
