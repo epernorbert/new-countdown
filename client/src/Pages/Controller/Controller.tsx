@@ -65,10 +65,18 @@ const Controller = ({ socket }: Props) => {
     socket.on("disconnect", () => setCurrentTime("server disconnected"));
   }, []);
 
-  const sendMessage = () => {
-    if (!error && !messageError) {
-      socket.emit("send-message", { message, id });
-      setMessage("");
+  const messageSubmitHandler = (
+    e: SyntheticEvent<HTMLFormElement, SubmitEvent>
+  ) => {
+    e.preventDefault();
+    const submitter = e.nativeEvent.submitter as HTMLButtonElement;
+    const submitValue = submitter?.name;
+
+    if (submitValue === "send-message") {
+      if (!error && !messageError) {
+        socket.emit("send-message", { message, id });
+        setMessage("");
+      }
     }
   };
 
@@ -147,13 +155,17 @@ const Controller = ({ socket }: Props) => {
             <button type="submit">{buttonText}</button>
             <button type="submit">stop</button>
           </form>
-          <input
-            placeholder="Message..."
-            onChange={messageChangeHandler}
-            value={message}
-            ref={messageRef}
-          />
-          <button onClick={sendMessage}>Send Message</button>
+          <form onSubmit={messageSubmitHandler}>
+            <input
+              placeholder="Message..."
+              onChange={messageChangeHandler}
+              value={message}
+              ref={messageRef}
+            />
+            <button type="submit" name="send-message">
+              Send Message
+            </button>
+          </form>
           <Time time={currentTime} />
           {error && error}
           {messageError && messageError}
