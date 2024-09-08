@@ -17,6 +17,7 @@ const Controller = ({ socket }: Props) => {
   const [message, setMessage] = useState("");
   const [currentTime, setCurrentTime] = useState("fetching");
   const timerRef = useRef<any>(null);
+  const messageRef = useRef<any>(null);
   const statusRef = useRef<status>("stop");
   const [buttonText, setButtonText] = useState<status>("start");
   const { id } = useParams();
@@ -24,6 +25,7 @@ const Controller = ({ socket }: Props) => {
   const [controller, setController] = useState([]);
   const [isControllerExist, setIsControllerExist] = useState(false);
   const [error, setError] = useState("");
+  const [messageError, setMessageError] = useState("");
 
   useEffect(() => {
     setIsLoading(true);
@@ -64,8 +66,10 @@ const Controller = ({ socket }: Props) => {
   }, []);
 
   const sendMessage = () => {
-    socket.emit("send-message", { message, id });
-    setMessage("");
+    if (!error && !messageError) {
+      socket.emit("send-message", { message, id });
+      setMessage("");
+    }
   };
 
   const submitHandler = (e: SyntheticEvent<HTMLFormElement, SubmitEvent>) => {
@@ -73,7 +77,7 @@ const Controller = ({ socket }: Props) => {
     const submitValue = e.nativeEvent.submitter?.innerHTML;
 
     if (submitValue === "send") {
-      if (!error) {
+      if (!error && !messageError) {
         statusRef.current = "stop";
         socket.emit("stop-timer", { statusRef, id });
         socket.emit("send-timer", { timer: timer * 60, id });
@@ -110,6 +114,18 @@ const Controller = ({ socket }: Props) => {
     }
   };
 
+  const messageChangeHander: React.ChangeEventHandler<HTMLInputElement> = (
+    e
+  ) => {
+    setMessage(e.target.value);
+
+    if (e.target.value.length > 50) {
+      setMessageError("Message text can not be over 50 character");
+    } else {
+      setMessageError("");
+    }
+  };
+
   return (
     <div>
       {isLoading && <h2>Loadin...</h2>}
@@ -131,14 +147,14 @@ const Controller = ({ socket }: Props) => {
           </form>
           <input
             placeholder="Message..."
-            onChange={(event) => {
-              setMessage(event.target.value);
-            }}
+            onChange={messageChangeHander}
             value={message}
+            ref={messageRef}
           />
           <button onClick={sendMessage}>Send Message</button>
           <Time time={currentTime} />
           {error && error}
+          {messageError && messageError}
         </>
       )}
       {!isLoading && !isControllerExist && <h2>404</h2>}
