@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Gép: 127.0.0.1
--- Létrehozás ideje: 2024. Aug 30. 16:19
+-- Létrehozás ideje: 2024. Sze 17. 14:40
 -- Kiszolgáló verziója: 10.4.25-MariaDB
 -- PHP verzió: 8.1.10
 
@@ -30,15 +30,9 @@ SET time_zone = "+00:00";
 CREATE TABLE `controller` (
   `controller_id` int(255) NOT NULL,
   `controller_name` varchar(255) NOT NULL,
-  `controller_key` varchar(255) NOT NULL
+  `controller_key` varchar(255) NOT NULL,
+  `controller_creationdate` date NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- A tábla adatainak kiíratása `controller`
---
-
-INSERT INTO `controller` (`controller_id`, `controller_name`, `controller_key`) VALUES
-(1, 'test', 'sad123asd2');
 
 --
 -- Indexek a kiírt táblákhoz
@@ -58,7 +52,16 @@ ALTER TABLE `controller`
 -- AUTO_INCREMENT a táblához `controller`
 --
 ALTER TABLE `controller`
-  MODIFY `controller_id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=108;
+  MODIFY `controller_id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=125;
+
+DELIMITER $$
+--
+-- Események
+--
+CREATE DEFINER=`root`@`localhost` EVENT `delete_older_records_that_one_day` ON SCHEDULE EVERY 1 DAY STARTS '2024-09-18 00:00:00' ON COMPLETION NOT PRESERVE ENABLE DO DELETE FROM controller
+  WHERE controller_creationdate < CURDATE() - INTERVAL 1 DAY$$
+
+DELIMITER ;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

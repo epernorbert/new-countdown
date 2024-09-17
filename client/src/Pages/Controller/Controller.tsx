@@ -1,10 +1,11 @@
 import React, { SyntheticEvent, useEffect, useRef, useState } from "react"; // we need this to make JSX compile
 import { useParams } from "react-router-dom";
 import Time from "../../Components/Time/Time";
+import styles from "./Controller.module.scss";
 
 type Props = { socket: any };
 
-type status = "start" | "stop" | "pause";
+type status = "start" | "stop" | "pause" | "continue";
 
 type Controller = {
   controller_id: number;
@@ -16,11 +17,15 @@ const Controller = ({ socket }: Props) => {
   const [message, setMessage] = useState("");
   const [currentTime, setCurrentTime] = useState("fetching");
   const timerRef = useRef<any>(null);
+  const messageRef = useRef<any>(null);
   const statusRef = useRef<status>("stop");
+  const [buttonText, setButtonText] = useState<status>("start");
   const { id } = useParams();
   const [isLoading, setIsLoading] = useState(false);
   const [controller, setController] = useState([]);
   const [isControllerExist, setIsControllerExist] = useState(false);
+  const [error, setError] = useState("");
+  const [messageError, setMessageError] = useState("");
 
   useEffect(() => {
     setIsLoading(true);
@@ -60,38 +65,75 @@ const Controller = ({ socket }: Props) => {
     socket.on("disconnect", () => setCurrentTime("server disconnected"));
   }, []);
 
-  const sendMessage = () => {
-    socket.emit("send-message", { message, id });
-    setMessage("");
+  const messageSubmitHandler = (
+    e: SyntheticEvent<HTMLFormElement, SubmitEvent>
+  ) => {
+    e.preventDefault();
+    const submitter = e.nativeEvent.submitter as HTMLButtonElement;
+    const submitValue = submitter?.name;
+
+    if (submitValue === "send-message") {
+      if (!error && !messageError) {
+        socket.emit("send-message", { message, id });
+        setMessage("");
+      }
+    }
   };
 
   const submitHandler = (e: SyntheticEvent<HTMLFormElement, SubmitEvent>) => {
     e.preventDefault();
     const submitValue = e.nativeEvent.submitter?.innerHTML;
 
-    if (submitValue === "Send") {
-      socket.emit("send-timer", { timer: timer * 60, id });
-      setTimer(timer);
+    if (submitValue === "send") {
+      if (!error && !messageError) {
+        statusRef.current = "stop";
+        socket.emit("stop-timer", { statusRef, id });
+        socket.emit("send-timer", { timer: timer * 60, id });
+        setTimer(timer);
+        setButtonText("start");
+      }
     }
 
-    if (submitValue === "Start") {
+    if (submitValue === "start" || submitValue === "continue") {
       statusRef.current = "start";
       socket.emit("start-timer", { statusRef, id });
+      setButtonText("pause");
     }
 
-    if (submitValue === "Pause") {
+    if (submitValue === "pause") {
       statusRef.current = "pause";
       socket.emit("pause-timer", { statusRef, id });
+      setButtonText("continue");
     }
 
-    if (submitValue === "Stop") {
+    if (submitValue === "stop") {
       statusRef.current = "stop";
       socket.emit("stop-timer", { statusRef, id });
+      setButtonText("start");
     }
   };
 
-  const timerChangeHander: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+  const timerChangeHandler: React.ChangeEventHandler<HTMLInputElement> = (
+    e
+  ) => {
     setTimer(timerRef.current?.value);
+    if (timerRef.current?.value > 1440) {
+      setError("Can not be over 24h");
+    } else {
+      setError("");
+    }
+  };
+
+  const messageChangeHandler: React.ChangeEventHandler<HTMLInputElement> = (
+    e
+  ) => {
+    setMessage(e.target.value);
+
+    if (e.target.value.length > 50) {
+      setMessageError("Message text can not be over 50 character");
+    } else {
+      setMessageError("");
+    }
   };
 
   return (
@@ -101,27 +143,32 @@ const Controller = ({ socket }: Props) => {
       {!isLoading && isControllerExist && (
         <>
           <h1>Controller page</h1>
-          <form onSubmit={submitHandler}>
+          <form className={styles.form} onSubmit={submitHandler}>
             <input
               placeholder="Minutes"
-              onChange={timerChangeHander}
+              onChange={timerChangeHandler}
               ref={timerRef}
               value={timer}
+              type="number"
             />
-            <button type="submit">Send</button>
-            <button type="submit">Start</button>
-            <button type="submit">Pause</button>
-            <button type="submit">Stop</button>
+            <button type="submit">send</button>
+            <button type="submit">{buttonText}</button>
+            <button type="submit">stop</button>
           </form>
-          <input
-            placeholder="Message..."
-            onChange={(event) => {
-              setMessage(event.target.value);
-            }}
-            value={message}
-          />
-          <button onClick={sendMessage}>Send Message</button>
+          <form onSubmit={messageSubmitHandler}>
+            <input
+              placeholder="Message..."
+              onChange={messageChangeHandler}
+              value={message}
+              ref={messageRef}
+            />
+            <button type="submit" name="send-message">
+              Send Message
+            </button>
+          </form>
           <Time time={currentTime} />
+          {error && error}
+          {messageError && messageError}
         </>
       )}
       {!isLoading && !isControllerExist && <h2>404</h2>}

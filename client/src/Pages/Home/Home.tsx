@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import styles from "./Home.module.scss";
+import { v4 as uuidv4 } from "uuid";
 
 type Props = {};
 
@@ -15,7 +16,8 @@ const Home = ({}: Props) => {
   const [activeController, setActiveController] = useState("");
 
   const handleCreateRoom = () => {
-    const key = Math.random().toString(36).slice(2);
+    const key = uuidv4();
+    console.log(key);
 
     fetch(`http://localhost:5000/create-room/${room}`, {
       method: "POST",
@@ -35,7 +37,9 @@ const Home = ({}: Props) => {
     if (controller_key !== null) {
       fetch(`http://localhost:5000/active-controller/${controller_key}`)
         .then((response) => response.json())
-        .then((data) => setActiveController(data[0].controller_name));
+        .then((data) =>
+          setActiveController(data.length > 0 ? data[0].controller_name : "")
+        );
     }
   }, []);
 
@@ -68,7 +72,9 @@ const Home = ({}: Props) => {
       ></input>
       <div>
         <span>Create room:</span>
-        <button onClick={handleCreateRoom}>Create room</button>
+        <button onClick={handleCreateRoom} disabled={isControllerExist}>
+          Create room
+        </button>
       </div>
       {room.length === 0 && <p>Start typing...</p>}
       {room.length > 0 && !isControllerExist && (
