@@ -1,4 +1,4 @@
-import "./App.css";
+import styles from "./App.module.scss";
 import { Route, Routes } from "react-router-dom";
 import Home from "./Pages/Home/Home";
 import Client from "./Pages/Client/Client";
@@ -9,7 +9,7 @@ const socket = io("http://localhost:5000"); // server port
 
 const App = () => {
   return (
-    <div className="App">
+    <div className={styles.app}>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/:id" element={<Client socket={socket} />} />

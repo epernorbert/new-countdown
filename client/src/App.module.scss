@@ -1,0 +1,17 @@
+@import './Style/Style.module.scss';
+
+@font-face {
+  font-family: oswald;
+  src: url('../public/fonts/Oswald-VariableFont_wght.ttf');
+}
+
+.app {
+  height: 100%;
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  background: $dark;
+  color: $grey;
+  font-family: oswald;
+  overflow: hidden;
+}

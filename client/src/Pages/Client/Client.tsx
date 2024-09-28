@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import Message from "../../Components/Message/Message";
 import ProgressBar from "../../Components/ProgressBar/ProgressBar";
 import Timer from "../../Components/Timer/Timer";
+import styles from "./Client.module.scss";
 
 type Props = { socket: any };
 
@@ -11,7 +13,7 @@ type Controller = {
 };
 
 const Client = ({ socket }: Props) => {
-  const [message, setMessage] = useState();
+  const [message, setMessage] = useState("");
   const { id } = useParams();
   const [controller, setController] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -98,14 +100,13 @@ const Client = ({ socket }: Props) => {
   }, [controller]);
 
   return (
-    <div>
-      <div>Client page</div>
+    <div className={styles.client}>
       {isLoading && <h2>Loadin...</h2>}
       {!isLoading && isControllerExist && (
         <>
           <Timer timeLeft={timer} />
           <ProgressBar max={max} value={timer} />
-          {message && <div>{message}</div>}
+          {message && <Message text={message} />}
         </>
       )}
       {!isLoading && !isControllerExist && <h2>404</h2>}

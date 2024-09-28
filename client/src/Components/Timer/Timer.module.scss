@@ -1,0 +1,14 @@
+.timer {
+  
+  .timeLeft {
+    font-size: 25vw;
+    display: flex;
+    justify-content: center;
+    max-width: 90%;
+    margin: 0 auto;
+
+    .timePart {
+      width: 33%;
+    }
+  }
+}
