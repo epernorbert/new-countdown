@@ -1,9 +1,5 @@
-@import './Style/Style.module.scss';
-
-@font-face {
-  font-family: oswald;
-  src: url('../public/fonts/Oswald-VariableFont_wght.ttf');
-}
+@import './Style/Common.module.scss';
+@import './Style/Fonts.module.scss';
 
 .app {
   height: 100%;
@@ -12,6 +8,6 @@
   text-align: center;
   background: $dark;
   color: $grey;
-  font-family: oswald;
+  font-family: roboto-light;
   overflow: hidden;
 }

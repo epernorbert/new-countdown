@@ -16,16 +16,18 @@ const Time = ({ timeLeft, className }: Props) => {
 
     return (
       <>
-        <span className={styles.timePart}>{hours}</span>:
-        <span className={styles.timePart}>{minutes}</span>:
-        <span className={styles.timePart}>{seconds}</span>
+        <div className={styles.timePart}>{hours}</div>
+        <span className={styles.colon}>:</span>
+        <div className={styles.timePart}>{minutes}</div>
+        <span className={styles.colon}>:</span>
+        <div className={styles.timePart}>{seconds}</div>
       </>
     );
   };
 
   return (
     <div className={classNames(styles.timer, className)}>
-      <span className={styles.timeLeft}>{convertNumberToTime(timeLeft)}</span>
+      <div className={styles.timeLeft}>{convertNumberToTime(timeLeft)}</div>
     </div>
   );
 };
