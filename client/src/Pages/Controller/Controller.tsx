@@ -1,6 +1,6 @@
-import React, { SyntheticEvent, useEffect, useRef, useState } from "react"; // we need this to make JSX compile
+import React, { SyntheticEvent, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import Time from "../../Components/Time/Time";
+import Time from "Components/Time/Time";
 import styles from "./Controller.module.scss";
 
 type Props = { socket: any };

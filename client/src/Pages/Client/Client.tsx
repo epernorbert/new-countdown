@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import Message from "../../Components/Message/Message";
-import ProgressBar from "../../Components/ProgressBar/ProgressBar";
-import Timer from "../../Components/Timer/Timer";
+import Message from "Components/Message/Message";
+import ProgressBar from "Components/ProgressBar/ProgressBar";
+import Timer from "Components/Timer/Timer";
 import styles from "./Client.module.scss";
 
 type Props = { socket: any };
