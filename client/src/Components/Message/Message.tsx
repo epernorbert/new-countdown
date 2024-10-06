@@ -1,5 +1,6 @@
 import classNames from "classnames";
 import styles from "./Message.module.scss";
+import Container from "../Container/Container";
 
 type Props = {
   text: string;
@@ -8,9 +9,11 @@ type Props = {
 
 const Message = ({ text, className }: Props) => {
   return (
-    <div className={classNames(styles.message, className)}>
-      <span className={styles.text}>{text}</span>
-    </div>
+    <Container>
+      <div className={classNames(styles.message, className)}>
+        <span className={styles.text}>{text}</span>
+      </div>
+    </Container>
   );
 };
 

@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import styles from "./ProgressBar.module.scss";
+import Container from "Components/Container/Container";
+import classNames from "classnames";
 
 type Props = { max: number; value: number };
 
@@ -12,13 +14,18 @@ const ProgressBar = ({ max, value }: Props) => {
   }, [value, max]);
 
   return (
-    <div className={styles.progressBar}>
-      <div
-        className={styles.value}
-        id="progress-bar"
-        style={{ width: `${progress}%` }}
-      ></div>
-    </div>
+    <Container className={styles.container}>
+      <div className={styles.progressBar}>
+        <div
+          className={classNames(
+            styles.value,
+            progress <= 20 && styles.orange,
+            progress <= 5 && styles.red
+          )}
+          style={{ width: `${progress}%` }}
+        />
+      </div>
+    </Container>
   );
 };
 

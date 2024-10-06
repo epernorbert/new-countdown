@@ -105,8 +105,8 @@ const Client = ({ socket }: Props) => {
       {!isLoading && isControllerExist && (
         <>
           <Timer timeLeft={timer} />
-          <ProgressBar max={max} value={timer} />
           {message && <Message text={message} />}
+          <ProgressBar max={max} value={timer} />
         </>
       )}
       {!isLoading && !isControllerExist && <h2>404</h2>}

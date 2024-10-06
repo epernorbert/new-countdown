@@ -1,5 +1,9 @@
 @import '~Style/Common.module.scss';
-@import '~Style/Fonts.module.scss';
+@import '~Style/Font.module.scss';
+
+html * {
+  box-sizing: border-box;
+}
 
 .app {
   height: 100%;
