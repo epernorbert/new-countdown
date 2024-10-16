@@ -1,6 +1,9 @@
-import { useEffect, useState } from "react";
-import styles from "./Home.module.scss";
-import { v4 as uuidv4 } from "uuid";
+import { useEffect, useState } from 'react';
+import styles from './Home.module.scss';
+import { v4 as uuidv4 } from 'uuid';
+import Button from 'Components/Button/Button';
+import Input from 'Components/Input/Input';
+import arrow from 'assets/images/arrow.png';
 
 type Props = {};
 
@@ -10,41 +13,41 @@ type Controller = {
 };
 
 const Home = ({}: Props) => {
-  const [room, setRoom] = useState("");
+  const [room, setRoom] = useState('');
   const [controller, setController] = useState([]);
   const [isControllerExist, setIsControllerExist] = useState(false);
-  const [activeController, setActiveController] = useState("");
+  const [activeController, setActiveController] = useState('');
 
   const handleCreateRoom = () => {
     const key = uuidv4();
     console.log(key);
 
     fetch(`http://localhost:5000/create-room/${room}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         room: room,
         key: key,
       }),
     })
       .then((response) => response.json())
-      .then(() => localStorage.setItem("controller_key", key))
+      .then(() => localStorage.setItem('controller_key', key))
       .then(() => (window.location.href = `${room}/controller`));
   };
 
   useEffect(() => {
-    const controller_key = localStorage.getItem("controller_key");
+    const controller_key = localStorage.getItem('controller_key');
     if (controller_key !== null) {
       fetch(`http://localhost:5000/active-controller/${controller_key}`)
         .then((response) => response.json())
         .then((data) =>
-          setActiveController(data.length > 0 ? data[0].controller_name : "")
+          setActiveController(data.length > 0 ? data[0].controller_name : '')
         );
     }
   }, []);
 
   useEffect(() => {
-    fetch("http://localhost:5000/controller-list")
+    fetch('http://localhost:5000/controller-list')
       .then((response) => response.json())
       .then((data) => setController(data))
       .catch((error) => console.log(error));
@@ -52,7 +55,7 @@ const Home = ({}: Props) => {
 
   useEffect(() => {
     const res = controller.find(findController);
-    typeof res === "object"
+    typeof res === 'object'
       ? setIsControllerExist(true)
       : setIsControllerExist(false);
   }, [room]);
@@ -63,31 +66,36 @@ const Home = ({}: Props) => {
 
   return (
     <div className={styles.home}>
-      <div>Home page</div>
-      <input
-        placeholder="Room name"
-        onChange={(e) => {
-          setRoom(e.target.value);
-        }}
-      ></input>
-      <div>
-        <span>Create room:</span>
-        <button onClick={handleCreateRoom} disabled={isControllerExist}>
-          Create room
-        </button>
+      <h1 className={styles.title}>Create your room</h1>
+      <div className={styles.formWrapper}>
+        <div className={styles.inputWrapper}>
+          <Input
+            placeholder="start typing"
+            onChange={(e) => {
+              setRoom(e.target.value);
+            }}
+          />
+          {room.length > 0 && !isControllerExist && (
+            <p className={styles.free}>FREE</p>
+          )}
+          {isControllerExist && <p className={styles.taken}>TAKEN</p>}
+        </div>
+        <Button
+          text="Create"
+          onClick={handleCreateRoom}
+          disabled={isControllerExist}
+        />
       </div>
-      {room.length === 0 && <p>Start typing...</p>}
-      {room.length > 0 && !isControllerExist && (
-        <p style={{ color: "green" }}>FREE</p>
-      )}
-      {isControllerExist && <p style={{ color: "red" }}>TAKEN</p>}
       {activeController && (
-        <p>
-          Active controller:{" "}
-          <a href={`/${activeController}/controller`}>{activeController}</a>
+        <p className={styles.activeController}>
+          You already have an active controller.
+          <br />
+          Visit the controller page:{' '}
+          <a className={styles.link} href={`/${activeController}/controller`}>
+            <span>{activeController}</span> <img src={arrow} width={12} />
+          </a>
         </p>
       )}
-      {!activeController && <p>No active controller</p>}
     </div>
   );
 };

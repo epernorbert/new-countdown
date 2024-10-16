@@ -1,3 +1,88 @@
+@import '~Style/Common.module.scss';
+
 .home {
-  
+  background: $dark2;
+  max-width: fit-content;
+  margin: 0 auto;
+  padding: 35px;
+  border-radius: 16px;
+  margin-top: 70px;
+  background: linear-gradient(
+    170deg,
+    rgba(57, 56, 70, 1) 0%,
+    rgba(22, 21, 39, 1) 100%
+  );
+  box-shadow: 11px 11px 0 $purple2;
+  transition: all 0.1s ease;
+
+  &:hover {
+    box-shadow: 14px 14px 0 $purple2;
+  }
+
+  .title {
+    margin-top: 0;
+  }
+
+  .formWrapper {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+
+    .inputWrapper {
+      display: flex;
+      position: relative;
+      width: 100%;
+
+      > input {
+        width: 100%;
+      }
+
+      .free {
+        color: $green;
+        font-size: 18px;
+        margin: 0;
+        position: absolute;
+        right: 0;
+        bottom: -20px;
+      }
+
+      .taken {
+        color: $red;
+        font-size: 18px;
+        margin: 0;
+        position: absolute;
+        right: 0;
+        bottom: -20px;
+      }
+    }
+  }
+
+  .activeController {
+    font-size: 18px;
+    margin: 35px 0 0 0;
+    text-align: left;
+    line-height: 24px;
+
+    .link {
+      color: $grey;
+      text-decoration: none;
+      justify-content: center;
+      align-items: center;
+      display: inline-flex;
+      gap: 7px;
+
+      &:hover img {
+        margin-left: 2px;
+      }
+
+      img {
+        transition: margin-left 0.1s ease;
+      }
+
+      > span {
+        margin-left: 0;
+        border-bottom: 1px solid;
+      }
+    }
+  }
 }

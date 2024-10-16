@@ -1,0 +1,19 @@
+@import '~Style/Common.module.scss';
+
+.input {
+  color: $grey;
+  border: none;
+  outline: none;
+  border-radius: 10px;
+  padding: 5px 5px 5px 10px;
+  font-size: 18px;
+  background: linear-gradient(
+    90deg,
+    rgba(88, 88, 100, 1) 0%,
+    rgba(83, 83, 95, 1) 100%
+  );
+
+  &::placeholder {
+    font-size: 16px;
+  }
+}

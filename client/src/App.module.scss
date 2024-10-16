@@ -5,13 +5,23 @@ html * {
   box-sizing: border-box;
 }
 
+body,
+input,
+button,
+select {
+  font-family: roboto-light;
+}
+
+h1 {
+  font-size: 48px;
+}
+
 .app {
   height: 100%;
   position: absolute;
   width: 100%;
   text-align: center;
-  background: $dark;
+  background: $purple;
   color: $grey;
-  font-family: roboto-light;
   overflow: hidden;
 }
