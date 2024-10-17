@@ -1,11 +1,12 @@
-import React, { SyntheticEvent, useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
-import Time from "Components/Time/Time";
-import styles from "./Controller.module.scss";
+import React, { SyntheticEvent, useEffect, useRef, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import Time from 'Components/Time/Time';
+import styles from './Controller.module.scss';
+import Input from 'Components/Input/Input';
+import { status } from 'Components/Types/types';
+import Button from 'Components/Button/Button';
 
 type Props = { socket: any };
-
-type status = "start" | "stop" | "pause" | "continue";
 
 type Controller = {
   controller_id: number;
@@ -14,22 +15,22 @@ type Controller = {
 
 const Controller = ({ socket }: Props) => {
   const [timer, setTimer] = useState(1);
-  const [message, setMessage] = useState("");
-  const [currentTime, setCurrentTime] = useState("fetching");
+  const [message, setMessage] = useState('');
+  const [currentTime, setCurrentTime] = useState('fetching');
   const timerRef = useRef<any>(null);
   const messageRef = useRef<any>(null);
-  const statusRef = useRef<status>("stop");
-  const [buttonText, setButtonText] = useState<status>("start");
+  const statusRef = useRef<status>('stop');
+  const [buttonText, setButtonText] = useState<status>('start');
   const { id } = useParams();
   const [isLoading, setIsLoading] = useState(false);
   const [controller, setController] = useState([]);
   const [isControllerExist, setIsControllerExist] = useState(false);
-  const [error, setError] = useState("");
-  const [messageError, setMessageError] = useState("");
+  const [error, setError] = useState('');
+  const [messageError, setMessageError] = useState('');
 
   useEffect(() => {
     setIsLoading(true);
-    fetch("http://localhost:5000/controller-list")
+    fetch('http://localhost:5000/controller-list')
       .then((response) => response.json())
       .then((data) => setController(data))
       .then(() => setIsLoading(false))
@@ -40,8 +41,8 @@ const Controller = ({ socket }: Props) => {
     fetch(`http://localhost:5000/controller-key/${id}`)
       .then((response) => response.json())
       .then((data) => {
-        if (localStorage.getItem("controller_key") !== data[0].controller_key) {
-          window.location.href = "http://localhost:3000/";
+        if (localStorage.getItem('controller_key') !== data[0].controller_key) {
+          window.location.href = 'http://localhost:3000/';
         }
       });
   }, []);
@@ -49,67 +50,67 @@ const Controller = ({ socket }: Props) => {
   useEffect(() => {
     if (controller.length > 0) {
       controller.find((item: Controller) => {
-        return item.controller_name === id ? setIsControllerExist(true) : "";
+        return item.controller_name === id ? setIsControllerExist(true) : '';
       });
     }
   }, [controller]);
 
-  socket.emit("join-room", id);
+  socket.emit('join-room', id);
 
   useEffect(() => {
-    socket.on("connect", () => console.log(socket.id));
-    socket.on("connect_error", () => {
+    socket.on('connect', () => console.log(socket.id));
+    socket.on('connect_error', () => {
       setTimeout(() => socket.connect(), 5000);
     });
-    socket.on("currentTime", (data: any) => setCurrentTime(data));
-    socket.on("disconnect", () => setCurrentTime("server disconnected"));
+    socket.on('currentTime', (data: any) => setCurrentTime(data));
+    socket.on('disconnect', () => setCurrentTime('server disconnected'));
   }, []);
 
   const messageSubmitHandler = (
     e: SyntheticEvent<HTMLFormElement, SubmitEvent>
   ) => {
     e.preventDefault();
-    const submitter = e.nativeEvent.submitter as HTMLButtonElement;
-    const submitValue = submitter?.name;
 
-    if (submitValue === "send-message") {
+    const submitterName = e.nativeEvent.submitter?.getAttribute('name');
+
+    if (submitterName === 'send-message') {
       if (!error && !messageError) {
-        socket.emit("send-message", { message, id });
-        setMessage("");
+        socket.emit('send-message', { message, id });
+        setMessage('');
       }
     }
   };
 
   const submitHandler = (e: SyntheticEvent<HTMLFormElement, SubmitEvent>) => {
     e.preventDefault();
-    const submitValue = e.nativeEvent.submitter?.innerHTML;
+    const submitterName = e.nativeEvent.submitter?.getAttribute('name');
 
-    if (submitValue === "send") {
+    if (submitterName === 'send') {
       if (!error && !messageError) {
-        statusRef.current = "stop";
-        socket.emit("stop-timer", { statusRef, id });
-        socket.emit("send-timer", { timer: timer * 60, id });
+        statusRef.current = 'stop';
+        socket.emit('stop-timer', { statusRef, id });
+        socket.emit('send-timer', { timer: timer * 60, id });
         setTimer(timer);
-        setButtonText("start");
+        setButtonText('start');
       }
     }
 
-    if (submitValue === "start" || submitValue === "continue") {
-      statusRef.current = "start";
-      socket.emit("start-timer", { statusRef, id });
-      setButtonText("pause");
+    if (submitterName === 'start' || submitterName === 'continue') {
+      statusRef.current = 'start';
+      socket.emit('start-timer', { statusRef, id });
+      setButtonText('pause');
     }
 
-    if (submitValue === "pause") {
-      statusRef.current = "pause";
-      socket.emit("pause-timer", { statusRef, id });
-      setButtonText("continue");
+    if (submitterName === 'pause') {
+      statusRef.current = 'pause';
+      socket.emit('pause-timer', { statusRef, id });
+      setButtonText('continue');
     }
 
-    if (submitValue === "stop") {
-      statusRef.current = "stop";
-      socket.emit("stop-timer", { statusRef, id });
-      setButtonText("start");
+    if (submitterName === 'stop') {
+      statusRef.current = 'stop';
+      socket.emit('stop-timer', { statusRef, id });
+      setButtonText('start');
     }
   };
 
@@ -118,9 +119,9 @@ const Controller = ({ socket }: Props) => {
   ) => {
     setTimer(timerRef.current?.value);
     if (timerRef.current?.value > 1440) {
-      setError("Can not be over 24h");
+      setError('Can not be over 24h');
     } else {
-      setError("");
+      setError('');
     }
   };
 
@@ -130,9 +131,9 @@ const Controller = ({ socket }: Props) => {
     setMessage(e.target.value);
 
     if (e.target.value.length > 50) {
-      setMessageError("Message text can not be over 50 character");
+      setMessageError('Message text can not be over 50 character');
     } else {
-      setMessageError("");
+      setMessageError('');
     }
   };
 
@@ -144,27 +145,25 @@ const Controller = ({ socket }: Props) => {
         <>
           <h1>Controller page</h1>
           <form className={styles.form} onSubmit={submitHandler}>
-            <input
+            <Input
               placeholder="Minutes"
               onChange={timerChangeHandler}
               ref={timerRef}
               value={timer}
               type="number"
             />
-            <button type="submit">send</button>
-            <button type="submit">{buttonText}</button>
-            <button type="submit">stop</button>
+            <Button type="submit" text="send" name="send" />
+            <Button type="submit" name={buttonText} text={buttonText} />
+            <Button type="submit" name="stop" text="stop" />
           </form>
           <form onSubmit={messageSubmitHandler}>
-            <input
+            <Input
               placeholder="Message..."
               onChange={messageChangeHandler}
               value={message}
               ref={messageRef}
             />
-            <button type="submit" name="send-message">
-              Send Message
-            </button>
+            <Button type="submit" name="send-message" text="Send Message" />
           </form>
           <Time time={currentTime} />
           {error && error}
