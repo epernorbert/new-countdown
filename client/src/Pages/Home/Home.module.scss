@@ -26,7 +26,7 @@
   .formWrapper {
     display: flex;
     justify-content: center;
-    gap: 15px;
+    gap: $box-gap;
 
     .inputWrapper {
       display: flex;

@@ -138,13 +138,13 @@ const Controller = ({ socket }: Props) => {
   };
 
   return (
-    <div>
+    <div className={styles.controller}>
       {isLoading && <h2>Loadin...</h2>}
 
       {!isLoading && isControllerExist && (
         <>
-          <h1>Controller page</h1>
-          <form className={styles.form} onSubmit={submitHandler}>
+          <h1 className={styles.title}>Timer controller</h1>
+          <form className={styles.timerForm} onSubmit={submitHandler}>
             <Input
               placeholder="Minutes"
               onChange={timerChangeHandler}
@@ -152,20 +152,28 @@ const Controller = ({ socket }: Props) => {
               value={timer}
               type="number"
             />
-            <Button type="submit" text="send" name="send" />
-            <Button type="submit" name={buttonText} text={buttonText} />
-            <Button type="submit" name="stop" text="stop" />
+            <div className={styles.controllerButtons}>
+              <Button type="submit" text="send" name="send" />
+              <Button type="submit" name={buttonText} text={buttonText} />
+              <Button type="submit" name="stop" text="stop" />
+            </div>
           </form>
-          <form onSubmit={messageSubmitHandler}>
+          <form className={styles.messageForm} onSubmit={messageSubmitHandler}>
             <Input
+              className={styles.input}
               placeholder="Message..."
               onChange={messageChangeHandler}
               value={message}
               ref={messageRef}
             />
-            <Button type="submit" name="send-message" text="Send Message" />
+            <Button
+              className={styles.button}
+              type="submit"
+              name="send-message"
+              text="Send Message"
+            />
           </form>
-          <Time time={currentTime} />
+          {/* <Time time={currentTime} /> */}
           {error && error}
           {messageError && messageError}
         </>
