@@ -52,9 +52,10 @@
 
   .error {
     text-align: left;
+    display: flex;
     color: $red;
     margin-bottom: 0;
-    display: block;
+    flex-direction: column;
     margin-top: 18px;
   }
 }

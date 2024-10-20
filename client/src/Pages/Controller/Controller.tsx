@@ -189,11 +189,11 @@ const Controller = ({ socket }: Props) => {
             />
           </form>
           {/* <Time time={currentTime} /> */}
-          {errorArr.map((item, key) => (
-            <span className={styles.error} key={key}>
-              {item}
-            </span>
-          ))}
+          <p className={styles.error}>
+            {errorArr.map((item, key) => (
+              <span key={key}>{item}</span>
+            ))}
+          </p>
         </>
       )}
       {!isLoading && !isControllerExist && <h2>404</h2>}
