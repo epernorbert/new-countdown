@@ -8,6 +8,7 @@ type Props = {
   className?: string;
   value?: string | number;
   type?: 'text' | 'number';
+  error?: boolean;
 };
 
 const Input = forwardRef<HTMLInputElement, Props>((props, ref) => {
@@ -16,7 +17,12 @@ const Input = forwardRef<HTMLInputElement, Props>((props, ref) => {
       type={props.type}
       ref={ref}
       onChange={props.onChange}
-      className={classNames(styles.input, props.className)}
+      className={classNames(
+        styles.input,
+        props.className,
+        props.error !== undefined &&
+          (props.error ? styles.error : styles.success)
+      )}
       placeholder={props.placeholder}
       value={props.value}
     />

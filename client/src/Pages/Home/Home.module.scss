@@ -32,28 +32,6 @@
       display: flex;
       position: relative;
       width: 100%;
-
-      > input {
-        width: 100%;
-      }
-
-      .free {
-        color: $green;
-        font-size: 18px;
-        margin: 0;
-        position: absolute;
-        right: 0;
-        bottom: -20px;
-      }
-
-      .taken {
-        color: $red;
-        font-size: 18px;
-        margin: 0;
-        position: absolute;
-        right: 0;
-        bottom: -20px;
-      }
     }
   }
 
@@ -84,5 +62,23 @@
         border-bottom: 1px solid;
       }
     }
+
+    .error {
+      text-align: left;
+      color: $red;
+      margin-bottom: 0;
+      display: block;
+      margin-top: 18px;
+      font-size: 16px;
+    }
+  }
+
+  .taken {
+    color: $red;
+    text-align: left;
+    margin-bottom: 0;
+    line-height: 24px;
+    display: block;
+    margin-top: 18px;
   }
 }

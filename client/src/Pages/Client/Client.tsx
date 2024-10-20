@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import Message from "Components/Message/Message";
-import ProgressBar from "Components/ProgressBar/ProgressBar";
-import Timer from "Components/Timer/Timer";
-import styles from "./Client.module.scss";
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import Message from 'Components/Message/Message';
+import ProgressBar from 'Components/ProgressBar/ProgressBar';
+import Timer from 'Components/Timer/Timer';
+import styles from './Client.module.scss';
 
 type Props = { socket: any };
 
@@ -13,58 +13,58 @@ type Controller = {
 };
 
 const Client = ({ socket }: Props) => {
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState('');
   const { id } = useParams();
   const [controller, setController] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isControllerExist, setIsControllerExist] = useState(false);
 
-  socket.emit("join-room", id);
+  socket.emit('join-room', id);
 
   useEffect(() => {
-    socket.on("message", (data: any) => {
+    socket.on('message', (data: any) => {
       setMessage(data.message);
     });
   }, [socket]);
 
   useEffect(() => {
-    socket.on("connect", () => console.log(socket.id));
-    socket.on("connect_error", () => {
+    socket.on('connect', () => console.log(socket.id));
+    socket.on('connect_error', () => {
       setTimeout(() => socket.connect(), 5000);
     });
 
-    socket.on("timer", (timer: number) => {
+    socket.on('timer', (timer: number) => {
       setTimer(timer);
       setMax(timer);
     });
   }, []);
 
   const [timer, setTimer] = useState(60);
-  const [status, setStatus] = useState("stop");
+  const [status, setStatus] = useState('stop');
   const [max, setMax] = useState(60);
 
-  socket.once("start", (status: string) => {
+  socket.once('start', (status: string) => {
     setStatus(status);
   });
 
-  socket.once("pause", (status: string) => {
+  socket.once('pause', (status: string) => {
     setStatus(status);
   });
 
-  socket.once("stop", (status: string) => {
+  socket.once('stop', (status: string) => {
     setStatus(status);
   });
 
   useEffect(() => {
     const countdown = setTimeout(decreaseTimer, 1000);
 
-    if (status === "pause") {
+    if (status === 'pause') {
       clearTimeout(countdown);
       setTimer(timer);
       return;
     }
 
-    if (status === "stop") {
+    if (status === 'stop') {
       clearTimeout(countdown);
       setTimer(max);
       return;
@@ -73,7 +73,7 @@ const Client = ({ socket }: Props) => {
     if (timer === 0) {
       clearTimeout(countdown);
       setTimer(0);
-      setStatus("pause");
+      setStatus('pause');
       return;
     }
   }, [timer, status, max]);
@@ -84,7 +84,7 @@ const Client = ({ socket }: Props) => {
 
   useEffect(() => {
     setIsLoading(true);
-    fetch("http://localhost:5000/controller-list")
+    fetch('http://localhost:5000/controller-list')
       .then((response) => response.json())
       .then((data) => setController(data))
       .then(() => setIsLoading(false))
@@ -94,14 +94,14 @@ const Client = ({ socket }: Props) => {
   useEffect(() => {
     if (controller.length > 0) {
       controller.find((item: Controller) => {
-        return item.controller_name === id ? setIsControllerExist(true) : "";
+        return item.controller_name === id ? setIsControllerExist(true) : '';
       });
     }
   }, [controller]);
 
   return (
     <div className={styles.client}>
-      {isLoading && <h2>Loadin...</h2>}
+      {isLoading && <h2>Loading...</h2>}
       {!isLoading && isControllerExist && (
         <>
           <Timer timeLeft={timer} />

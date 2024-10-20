@@ -49,4 +49,12 @@
       max-width: none;
     }
   }
+
+  .error {
+    text-align: left;
+    color: $red;
+    margin-bottom: 0;
+    display: block;
+    margin-top: 18px;
+  }
 }

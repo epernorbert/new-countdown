@@ -16,11 +16,11 @@ const Home = ({}: Props) => {
   const [room, setRoom] = useState('');
   const [controller, setController] = useState([]);
   const [isControllerExist, setIsControllerExist] = useState(false);
+  const [error, setError] = useState('');
   const [activeController, setActiveController] = useState('');
 
   const handleCreateRoom = () => {
     const key = uuidv4();
-    console.log(key);
 
     fetch(`http://localhost:5000/create-room/${room}`, {
       method: 'POST',
@@ -58,6 +58,9 @@ const Home = ({}: Props) => {
     typeof res === 'object'
       ? setIsControllerExist(true)
       : setIsControllerExist(false);
+    room.length >= 16
+      ? setError('Room name can not be over 15 character')
+      : setError('');
   }, [room]);
 
   const findController = (controller: Controller) => {
@@ -70,15 +73,16 @@ const Home = ({}: Props) => {
       <div className={styles.formWrapper}>
         <div className={styles.inputWrapper}>
           <Input
+            error={
+              room.length > 0
+                ? isControllerExist || room.length >= 16
+                : undefined
+            }
             placeholder="start typing"
             onChange={(e) => {
               setRoom(e.target.value);
             }}
           />
-          {room.length > 0 && !isControllerExist && (
-            <p className={styles.free}>FREE</p>
-          )}
-          {isControllerExist && <p className={styles.taken}>TAKEN</p>}
         </div>
         <Button
           text="Create"
@@ -94,7 +98,11 @@ const Home = ({}: Props) => {
           <a className={styles.link} href={`/${activeController}/controller`}>
             <span>{activeController}</span> <img src={arrow} width={12} />
           </a>
+          {error && <span className={styles.error}>{error}</span>}
         </p>
+      )}
+      {isControllerExist && (
+        <span className={styles.taken}>This room name already exist.</span>
       )}
     </div>
   );

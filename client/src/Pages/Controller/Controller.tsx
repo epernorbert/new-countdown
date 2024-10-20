@@ -25,8 +25,10 @@ const Controller = ({ socket }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [controller, setController] = useState([]);
   const [isControllerExist, setIsControllerExist] = useState(false);
-  const [error, setError] = useState('');
-  const [messageError, setMessageError] = useState('');
+  const [errorArr, setErrorArr] = useState<string[]>([]);
+
+  const messageError = 'Message text can not be over 50 characters';
+  const timerError = 'Timer can not be over 24h';
 
   useEffect(() => {
     setIsLoading(true);
@@ -57,14 +59,14 @@ const Controller = ({ socket }: Props) => {
 
   socket.emit('join-room', id);
 
-  useEffect(() => {
+  /* useEffect(() => {
     socket.on('connect', () => console.log(socket.id));
     socket.on('connect_error', () => {
       setTimeout(() => socket.connect(), 5000);
     });
     socket.on('currentTime', (data: any) => setCurrentTime(data));
     socket.on('disconnect', () => setCurrentTime('server disconnected'));
-  }, []);
+  }, []); */
 
   const messageSubmitHandler = (
     e: SyntheticEvent<HTMLFormElement, SubmitEvent>
@@ -74,7 +76,7 @@ const Controller = ({ socket }: Props) => {
     const submitterName = e.nativeEvent.submitter?.getAttribute('name');
 
     if (submitterName === 'send-message') {
-      if (!error && !messageError) {
+      if (!errorArr.includes(timerError) && !errorArr.includes(messageError)) {
         socket.emit('send-message', { message, id });
         setMessage('');
       }
@@ -86,7 +88,7 @@ const Controller = ({ socket }: Props) => {
     const submitterName = e.nativeEvent.submitter?.getAttribute('name');
 
     if (submitterName === 'send') {
-      if (!error && !messageError) {
+      if (!errorArr.includes(timerError) && !errorArr.includes(messageError)) {
         statusRef.current = 'stop';
         socket.emit('stop-timer', { statusRef, id });
         socket.emit('send-timer', { timer: timer * 60, id });
@@ -119,9 +121,13 @@ const Controller = ({ socket }: Props) => {
   ) => {
     setTimer(timerRef.current?.value);
     if (timerRef.current?.value > 1440) {
-      setError('Can not be over 24h');
+      if (!errorArr.includes(timerError)) {
+        setErrorArr((prevErrors) => [...prevErrors, timerError]);
+      }
     } else {
-      setError('');
+      setErrorArr((prevErrors) =>
+        prevErrors.filter((error) => error !== timerError)
+      );
     }
   };
 
@@ -129,18 +135,25 @@ const Controller = ({ socket }: Props) => {
     e
   ) => {
     setMessage(e.target.value);
-
     if (e.target.value.length > 50) {
-      setMessageError('Message text can not be over 50 character');
+      if (!errorArr.includes(messageError)) {
+        setErrorArr((prevErrors) => [...prevErrors, messageError]);
+      }
     } else {
-      setMessageError('');
+      setErrorArr((prevErrors) =>
+        prevErrors.filter((error) => error !== messageError)
+      );
     }
   };
 
+  const onlyShowErrorTimer = errorArr.includes(timerError) ? true : undefined;
+
+  const onlyShowErrorMessage =
+    message.length > 0 && errorArr.includes(messageError) ? true : undefined;
+
   return (
     <div className={styles.controller}>
-      {isLoading && <h2>Loadin...</h2>}
-
+      {isLoading && <h2>Loading...</h2>}
       {!isLoading && isControllerExist && (
         <>
           <h1 className={styles.title}>Timer controller</h1>
@@ -151,6 +164,7 @@ const Controller = ({ socket }: Props) => {
               ref={timerRef}
               value={timer}
               type="number"
+              error={onlyShowErrorTimer}
             />
             <div className={styles.controllerButtons}>
               <Button type="submit" text="send" name="send" />
@@ -165,6 +179,7 @@ const Controller = ({ socket }: Props) => {
               onChange={messageChangeHandler}
               value={message}
               ref={messageRef}
+              error={onlyShowErrorMessage}
             />
             <Button
               className={styles.button}
@@ -174,8 +189,11 @@ const Controller = ({ socket }: Props) => {
             />
           </form>
           {/* <Time time={currentTime} /> */}
-          {error && error}
-          {messageError && messageError}
+          {errorArr.map((item, key) => (
+            <span className={styles.error} key={key}>
+              {item}
+            </span>
+          ))}
         </>
       )}
       {!isLoading && !isControllerExist && <h2>404</h2>}
