@@ -99,6 +99,16 @@ const Client = ({ socket }: Props) => {
     }
   }, [controller]);
 
+  useEffect(() => {
+    if (message) {
+      const timeout = setTimeout(() => {
+        setMessage('');
+      }, 10000);
+
+      return () => clearTimeout(timeout);
+    }
+  }, [message]);
+
   return (
     <div className={styles.client}>
       {isLoading && <h2>Loading...</h2>}

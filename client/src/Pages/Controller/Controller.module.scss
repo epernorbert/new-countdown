@@ -50,6 +50,35 @@
     }
   }
 
+  .activeController {
+    font-size: 18px;
+    margin: 35px 0 0 0;
+    text-align: left;
+    line-height: 24px;
+
+    .link {
+      color: $grey;
+      text-decoration: none;
+      justify-content: center;
+      align-items: center;
+      display: inline-flex;
+      gap: 7px;
+
+      &:hover img {
+        margin-left: 2px;
+      }
+
+      img {
+        transition: margin-left 0.1s ease;
+      }
+
+      > span {
+        margin-left: 0;
+        border-bottom: 1px solid;
+      }
+    }
+  }
+
   .error {
     text-align: left;
     display: flex;

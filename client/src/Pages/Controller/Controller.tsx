@@ -5,6 +5,7 @@ import styles from './Controller.module.scss';
 import Input from 'Components/Input/Input';
 import { status } from 'Components/Types/types';
 import Button from 'Components/Button/Button';
+import arrow from 'assets/images/arrow.png';
 
 type Props = { socket: any };
 
@@ -188,12 +189,20 @@ const Controller = ({ socket }: Props) => {
               text="Send Message"
             />
           </form>
-          {/* <Time time={currentTime} /> */}
-          <p className={styles.error}>
-            {errorArr.map((item, key) => (
-              <span key={key}>{item}</span>
-            ))}
+          <p className={styles.activeController}>
+            Check your timer:{' '}
+            <a className={styles.link} href={`/${id}`} target="_blank">
+              <span>{id}</span> <img src={arrow} width={12} />
+            </a>
           </p>
+          {/* <Time time={currentTime} /> */}
+          {errorArr.length > 0 && (
+            <p className={styles.error}>
+              {errorArr.map((item, key) => (
+                <span key={key}>{item}</span>
+              ))}
+            </p>
+          )}
         </>
       )}
       {!isLoading && !isControllerExist && <h2>404</h2>}
